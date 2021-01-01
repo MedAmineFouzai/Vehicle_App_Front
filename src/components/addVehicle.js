@@ -1,4 +1,5 @@
 import { Form, Button } from "react-bootstrap";
+import { useHistory } from 'react-router-dom';
 
 const addVehicle = async (data) => {
   try {
@@ -15,20 +16,24 @@ const addVehicle = async (data) => {
 };
 
 export default function AddVehicles() {
-  const handleClick = (event) => {
+  const history = useHistory();
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
     let data = {
       vehicleType: event.target.elements.vehicleType.value,
       vehicleModel: event.target.elements.vehicleModel.value,
       vehicleCreationDate: event.target.elements.vehicleCreationDate.value,
       vehiclePrice: event.target.elements.vehiclePrice.value,
     };
-    addVehicle(data);
+    await addVehicle(data);
+    history.push('/');
   };
 
   return (
     <div className="container">
       <br></br>
-      <Form onSubmit={handleClick}>
+      <Form onSubmit={handleSubmit}>
         <Form.Group controlId="vehicleType">
           <Form.Label>Vehicle Type</Form.Label>
           <Form.Control type="text" placeholder="vehicleType" />

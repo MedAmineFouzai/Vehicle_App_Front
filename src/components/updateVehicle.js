@@ -1,6 +1,6 @@
 import { Form, Button } from "react-bootstrap";
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useHistory } from "react-router-dom";
 
 const updateVehicle = async (data) => {
   try {
@@ -17,7 +17,7 @@ const updateVehicle = async (data) => {
 };
 
 export default function UpdateVehicles(props) {
-  const [vehicle, setVehicle] = useState({});
+  const [vehicle, setVehicle] = useState(null);
 
   const getVehicle = async (id) => {
     try {
@@ -30,36 +30,34 @@ export default function UpdateVehicles(props) {
       console.error(error);
     }
   };
-  let { vehicleId } = useParams();
+  const { vehicleId } = useParams();
+  const history = useHistory();
 
-  console.log(vehicleId);
-  const handleClick = (event) => {
-    let data = {
-      vehicleId: vehicleId,
-      vehicleType: event.target.elements.vehicleType.value,
-      vehicleModel: event.target.elements.vehicleModel.value,
-      vehicleCreationDate: event.target.elements.vehicleCreationDate.value,
-      vehiclePrice: event.target.elements.vehiclePrice.value,
-    };
-    updateVehicle(data);
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    if (vehicle) {
+      await updateVehicle(vehicle);
+      history.push('/');
+    }
   };
   const handleChange = (event) => {
-    setVehicle({ ...event.target });
+    setVehicle({ ...vehicle, [event.target.name]: event.target.value });
   };
   useEffect(() => {
     getVehicle(vehicleId);
   }, [vehicleId]);
 
-  return (
+  return vehicle && (
     <div className="container">
       <br></br>
-      <Form onSubmit={handleClick} onChange={handleChange}>
+      <Form onSubmit={handleSubmit} onChange={handleChange}>
         <Form.Group controlId="vehicleType">
           <Form.Label>Vehicle Type</Form.Label>
           <Form.Control
             type="text"
             placeholder="vehicleType"
             value={vehicle.vehicleType}
+            name='vehicleType'
           />
         </Form.Group>
 
@@ -69,14 +67,16 @@ export default function UpdateVehicles(props) {
             type="text"
             placeholder="vehicleModel"
             value={vehicle.vehicleModel}
+            name='vehicleModel'
           />
         </Form.Group>
 
         <Form.Group controlId="vehicleCreationDate">
           <Form.Label>Vehicle Creation Date</Form.Label>
           <Form.Control
-            type="date"
-            value={new Date(vehicle.vehicleCreationDate)}
+            type="datetime-local"
+            value={vehicle.vehicleCreationDate.split('.')[0]}
+            name='vehicleCreationDate'
           />
         </Form.Group>
 
@@ -86,6 +86,7 @@ export default function UpdateVehicles(props) {
             type="number"
             placeholder="vehiclePrice"
             value={vehicle.vehiclePrice}
+            name='vehiclePrice'
           />
         </Form.Group>
 

@@ -24,7 +24,7 @@ export default function VehicleList() {
         <td>{vehicle.vehicleId}</td>
         <td>{vehicle.vehicleType}</td>
         <td>{vehicle.vehicleModel}</td>
-        <td>{vehicle.vehicleCreationDate}</td>
+        <td>{new Date(vehicle.vehicleCreationDate).toLocaleString()}</td>
         <td>{vehicle.vehiclePrice}</td>
         <td>
           <DeleteButton id={vehicle.vehicleId} />
